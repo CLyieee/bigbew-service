@@ -21,7 +21,14 @@ const corsOptions = {
 };
 
 // Initialize Socket.IO with CORS options
-const io = new Server(server, { cors: corsOptions });
+const io = new Server(server, {
+  cors: {
+    origin: "https://bigbrew-app.vercel.app",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
 
 // Middleware
 app.use(cors(corsOptions)); // Apply CORS middleware
