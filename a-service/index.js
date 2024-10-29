@@ -15,7 +15,7 @@ const server = http.createServer(app); // Create HTTP server instance
 // Initialize Socket.IO with CORS options
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // Allow requests from this origin
+    origin: "https://bigbrew-app.vercel.app/", // Allow requests from this origin
     methods: ["GET", "POST"], // Allow specific methods
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   },
