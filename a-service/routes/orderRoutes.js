@@ -48,6 +48,7 @@ router.get(API_ENDPOINTS.ORDER.GET_ALL, async (req, res) => {
   }
 });
 
+
 // Update Order route
 router.put(API_ENDPOINTS.ORDER.UPDATE_STATUS, async (req, res) => {
   const { orderNumber } = req.params;
