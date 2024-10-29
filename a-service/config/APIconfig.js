@@ -20,7 +20,7 @@ module.exports = {
 
     ORDER: {
       CREATE: "/order/create",
-      GET_ALL: "/order/get/all",
+      GET_ALL: "/orders/get/all",
       UPDATE_STATUS: "/order/update/:orderNumber", // Ensure this is defined
     },
   },
