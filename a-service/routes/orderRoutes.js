@@ -3,6 +3,16 @@ const router = express.Router();
 const orderService = require("../services/orderService");
 const { API_ENDPOINTS } = require("../config/APIconfig");
 const { body, validationResult } = require("express-validator");
+const Pusher = require("pusher");
+
+// Initialize Pusher
+const pusher = new Pusher({
+  appId: "1888068",
+  key: "a8f6e6479ccbf226115c",
+  secret: "fe1203825f03aa366a92",
+  cluster: "ap1",
+  useTLS: true,
+});
 
 // Create Order route
 router.post(API_ENDPOINTS.ORDER.CREATE, async (req, res) => {
@@ -13,8 +23,10 @@ router.post(API_ENDPOINTS.ORDER.CREATE, async (req, res) => {
 
   try {
     const order = await orderService.createOrder(req.body);
-    // Emit new order event
-    req.io.emit("newOrder", order); // Emit the new order to all connected clients
+    // Trigger new order event to Pusher
+    pusher.trigger("orders", "new-order", {
+      orderData: order,
+    });
     return res.status(201).json({
       message: "Order created successfully",
       order,
@@ -48,8 +60,10 @@ router.put(API_ENDPOINTS.ORDER.UPDATE_STATUS, async (req, res) => {
       status,
     });
 
-    // Emit event if order status updated
-    req.io.emit("orderUpdated", updatedOrder); // Notify clients of the updated order
+    // Trigger event if order status updated
+    pusher.trigger("orders", "order-updated", {
+      orderData: updatedOrder,
+    }); // Notify clients of the updated order
 
     return res.status(200).json({
       message: "Order updated successfully",
