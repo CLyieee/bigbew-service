@@ -3,11 +3,10 @@ const http = require("http");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
 const mongoose = require("mongoose");
-const { Server } = require("socket.io");
+const Pusher = require("pusher");
 const orderRoutes = require("./routes/orderRoutes");
 const { API_ENDPOINTS } = require("./config/APIconfig");
 const { constants } = require("./config/constantsConfig");
-
 
 const PORT = process.env.PORT || constants.PORT;
 const app = express();
@@ -20,21 +19,18 @@ const corsOptions = {
   credentials: true,
 };
 
-// Initialize Socket.IO with CORS options
-const io = new Server(server, {
-  cors: {
-    origin: "https://bigbrew-app.vercel.app",
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-  addTrailingSlash: false, // No trailing slashes enforced
-});
-
-
-
 // Middleware
 app.use(cors(corsOptions)); // Apply CORS middleware
 app.use(express.json()); // Parse JSON bodies
+
+// Initialize Pusher with your credentials
+const pusher = new Pusher({
+  appId: "1888068",
+  key: "a8f6e6479ccbf226115c",
+  secret: "fe1203825f03aa366a92",
+  cluster: "ap1",
+  useTLS: true,
+});
 
 // Connect to MongoDB
 mongoose
@@ -48,21 +44,19 @@ mongoose
     console.error(`${constants.ERROR.CONNECTION_FAILED}`, error);
   });
 
-// Middleware to attach io instance to request
-app.use((req, res, next) => {
-  req.io = io; // Attach the Socket.IO instance to the request object
-  next();
-});
-
 // Register the order routes
 app.use(API_ENDPOINTS.MAIN.DEFAULT, orderRoutes);
 
-// Handle socket connections
-io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
-  socket.emit("connectionStatus", { status: "connected" });
+// Example of triggering an event with Pusher
+app.post('/api/order', (req, res) => {
+  const orderData = req.body;
 
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+  // Here you would save your order data to the database
+
+  // Trigger the event to notify clients
+  pusher.trigger('orders', 'new-order', {
+    orderData: orderData
   });
+
+  res.status(200).send("Order created successfully.");
 });
