@@ -48,6 +48,18 @@ router.get(API_ENDPOINTS.ORDER.GET_ALL, async (req, res) => {
   }
 });
 
+// Get Order by Order Number route
+router.get(`${API_ENDPOINTS.ORDER.GET_ALL}/:orderNumber`, async (req, res) => {
+  const { orderNumber } = req.params;
+
+  try {
+    const order = await orderService.getOrderByNumber(orderNumber); // Call service to get order by number
+    return res.status(200).json(order);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+});
 
 // Update Order route
 router.put(API_ENDPOINTS.ORDER.UPDATE_STATUS, async (req, res) => {
