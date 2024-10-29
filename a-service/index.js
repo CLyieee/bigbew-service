@@ -27,6 +27,7 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
     credentials: true,
   },
+  addTrailingSlash: false, // No trailing slashes enforced
 });
 
 
