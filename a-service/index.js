@@ -34,7 +34,10 @@ const pusher = new Pusher({
 
 // Connect to MongoDB
 mongoose
-  .connect(process.env.MONGO_URL || "mongodb+srv://bms:QoAQEpD0XfeVBrNj@cluster0.mbzgw.mongodb.net/mbs?retryWrites=true&w=majority&appName=Cluster0")
+  .connect(
+    process.env.MONGO_URL ||
+      "mongodb+srv://bms:QoAQEpD0XfeVBrNj@cluster0.mbzgw.mongodb.net/mbs?retryWrites=true&w=majority&appName=Cluster0"
+  )
   .then(() => {
     server.listen(PORT, () => {
       console.log(`${constants.SUCCESS.SERVER} ${PORT}`);
@@ -47,16 +50,16 @@ mongoose
 // Register the order routes
 app.use(API_ENDPOINTS.MAIN.DEFAULT, orderRoutes);
 
-// Example of triggering an event with Pusher
-app.post('/api/order', (req, res) => {
-  const orderData = req.body;
+// // Example of triggering an event with Pusher
+// app.post('/api/order', (req, res) => {
+//   const orderData = req.body;
 
-  // Here you would save your order data to the database
+//   // Here you would save your order data to the database
 
-  // Trigger the event to notify clients
-  pusher.trigger('orders', 'new-order', {
-    orderData: orderData
-  });
+//   // Trigger the event to notify clients
+//   pusher.trigger('orders', 'new-order', {
+//     orderData: orderData
+//   });
 
-  res.status(200).send("Order created successfully.");
-});
+//   res.status(200).send("Order created successfully.");
+// });
