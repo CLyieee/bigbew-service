@@ -29,7 +29,7 @@ app.use(express.json()); // Parse JSON bodies
 
 // Connect to MongoDB
 mongoose
-  .connect(process.env.MONGO_URL)
+  .connect(process.env.MONGO_URL || "mongodb+srv://bms:QoAQEpD0XfeVBrNj@cluster0.mbzgw.mongodb.net/mbs?retryWrites=true&w=majority&appName=Cluster0")
   .then(() => {
     server.listen(PORT, () => {
       console.log(`${constants.SUCCESS.SERVER} ${PORT}`);
