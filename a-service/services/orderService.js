@@ -5,6 +5,13 @@ const orderRepository = require("../repository/orderRepository");
 // Create a new order
 const createOrder = async (orderData) => {
   try {
+    // Check if the orderNumber already exists
+    const existingOrder = await orderRepository.findByOrderNumber(orderData.orderNumber);
+    
+    if (existingOrder) {
+      throw new Error("Order number already exists");
+    }
+
     return await orderRepository.createOrder(orderData); // Call repository function to create an order
   } catch (error) {
     throw new Error("Failed to create order: " + error.message);
