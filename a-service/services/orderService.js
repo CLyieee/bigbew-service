@@ -1,5 +1,3 @@
-// services/orderService.js
-
 const orderRepository = require("../repository/orderRepository");
 
 // Create a new order
@@ -24,6 +22,21 @@ const getAllOrders = async () => {
     return await orderRepository.findAllOrders(); // Fetch all orders
   } catch (error) {
     throw new Error("Failed to fetch orders: " + error.message);
+  }
+};
+
+// Fetch an order by order number
+const getOrderByNumber = async (orderNumber) => {
+  try {
+    const order = await orderRepository.findByOrderNumber(orderNumber); // Call repository function to find by order number
+
+    if (!order) {
+      throw new Error("Order not found");
+    }
+
+    return order; // Return the found order
+  } catch (error) {
+    throw new Error("Failed to fetch order: " + error.message);
   }
 };
 
@@ -56,5 +69,6 @@ const updateOrder = async (orderNumber, updateData) => {
 module.exports = {
   createOrder,
   getAllOrders,
+  getOrderByNumber, // Add the new function to the exports
   updateOrder,
 };
