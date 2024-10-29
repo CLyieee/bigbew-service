@@ -1,12 +1,19 @@
 {
   "version": 2,
   "builds": [
-      {"src": "*.js", "use": "@vercel/node" }
+    {
+      "src": "server.js",   // Specify the entry point for your server
+      "use": "@vercel/node"
+    }
   ],
-  "routes":[
-  {
-    "src": "/(.*)",
-    "dest": "/"
-  }
+  "routes": [
+    {
+      "src": "/socket.io/(.*)", // Route for Socket.IO connections
+      "dest": "/socket.io/$1"
+    },
+    {
+      "src": "/(.*)",           // Catch-all route for other requests
+      "dest": "/"
+    }
   ]
 }
