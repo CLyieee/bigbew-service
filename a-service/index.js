@@ -22,7 +22,11 @@ const io = new Server(server, {
 });
 
 // Middleware
-app.use(cors()); // Use CORS middleware
+app.use(cors({
+  origin: "https://bigbrew-app.vercel.app", // Allow requests only from this origin
+  methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
+  credentials: true // Allow cookies and authentication headers
+}));
 app.use(express.json()); // Parse JSON bodies
 
 // Connect to MongoDB
