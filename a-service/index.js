@@ -1,65 +1,37 @@
 const express = require("express");
-const http = require("http");
-const dotenv = require("dotenv").config();
-const cors = require("cors");
-const mongoose = require("mongoose");
-const Pusher = require("pusher");
-const orderRoutes = require("./routes/orderRoutes");
-const { API_ENDPOINTS } = require("./config/APIconfig");
-const { constants } = require("./config/constantsConfig");
-
-const PORT = process.env.PORT || constants.PORT;
 const app = express();
-const server = http.createServer(app);
-
-// CORS Options
-const corsOptions = {
-  origin: "https://bigbrew-app.vercel.app",
-  methods: ["GET", "POST"],
-  credentials: true,
-};
+const cors = require("cors");
+require("dotenv").config();
+const mongoose = require("mongoose");
+const userRoutes = require("./routes/userRoutes");
+const diaryRoutes = require("./routes/diaryRoutes");
+const { API_ENDPOINTS } = require("./config/apiConfig");
 
 // Middleware
-app.use(cors(corsOptions)); // Apply CORS middleware
-app.use(express.json()); // Parse JSON bodies
-
-// Initialize Pusher with your credentials
-const pusher = new Pusher({
-  appId: "1888068",
-  key: "a8f6e6479ccbf226115c",
-  secret: "fe1203825f03aa366a92",
-  cluster: "ap1",
-  useTLS: true,
-});
-
-// Connect to MongoDB
-mongoose
-  .connect(
-    process.env.MONGO_URL ||
-      "mongodb+srv://bms:QoAQEpD0XfeVBrNj@cluster0.mbzgw.mongodb.net/mbs?retryWrites=true&w=majority&appName=Cluster0"
-  )
-  .then(() => {
-    server.listen(PORT, () => {
-      console.log(`${constants.SUCCESS.SERVER} ${PORT}`);
-    });
+app.use(
+  cors({
+    origin: ["https://ojt-app-rho.vercel.app"], // Ensure this matches exactly
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: ["Content-Type", "Authorization"],
+   
   })
-  .catch((error) => {
-    console.error(`${constants.ERROR.CONNECTION_FAILED}`, error);
-  });
+);
 
-// Register the order routes
-app.use(API_ENDPOINTS.MAIN.DEFAULT, orderRoutes);
+app.use(express.json());
 
-// Example of triggering an event with Pusher
-app.post('/api/order', (req, res) => {
-  const orderData = req.body;
+// MongoDB Connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((error) => console.error("MongoDB connection error:", error));
 
-  // Here you would save your order data to the database
+// Routes
+app.use(API_ENDPOINTS.MAIN.DEFAULT, userRoutes);
+app.use(API_ENDPOINTS.MAIN.DEFAULT, diaryRoutes);
 
-  // Trigger the event to notify clients
-  pusher.trigger('orders', 'new-order', {
-    orderData: orderData
-  });
 
-  res.status(200).send("Order created successfully.");
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log("Server is running on port", PORT);
 });
